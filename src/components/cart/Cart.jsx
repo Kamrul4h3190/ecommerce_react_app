@@ -9,7 +9,7 @@ import { formatPrice } from "../../utils/formatPrice";
 
 const Cart = () => {
     const dispatch = useDispatch();
-    const {cart} = useSelector((state) => state.carts);
+    const {cart, cartId} = useSelector((state) => state.carts);
     const newCart = {...cart};
     
     useEffect(() => {
@@ -51,8 +51,19 @@ const Cart = () => {
             </div>
 
             <div>
-                {cart && cart.length > 0  && 
-                    cart.map((item,i)=><ItemContent key={i}{...item}/>)}
+                {/* {cart && cart.length > 0  && 
+                    cart.map((item,i)=><ItemContent key={i}{...item}/>)} */}
+                
+                {/* put cartId in each cartItems, to find the cartId while deleting cartItem */}
+                {cart && cart.length > 0 &&
+                    cart.map((item, i) => (
+                        <ItemContent
+                            key={i}
+                            {...item}
+                            cartId={cartId}
+                        />
+                    ))
+                }
             </div>
 
             <div className="border-t-[1.5px] border-slate-200 py-4 flex sm:flex-row sm:px-0 px-2 flex-col sm:justify-between gap-4">

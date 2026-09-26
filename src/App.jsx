@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import Products from './components/products/Products'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
@@ -13,9 +13,20 @@ import LogIn from './components/auth/Login'
 import PrivateRoute from './components/PrivateRoute'
 import Register from './components/auth/Register'
 import Checkout from './components/checkout/Checkout'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserCart } from './store/actions'
 
 
 function App() {
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getUserCart());
+    }
+  }, [user, dispatch]);
 
   return (
     <React.Fragment>

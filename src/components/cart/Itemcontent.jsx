@@ -18,10 +18,10 @@ const ItemContent = ({
     specialPrice,
     cartId,
   }) => {
-    const [currentQuantity, setCurrentQuantity] = useState(quantity);
+    // const [currentQuantity, setCurrentQuantity] = useState(quantity);
     const dispatch = useDispatch();
 
-    const handleQtyIncrease = (cartItems) => {
+    /* const handleQtyIncrease = (cartItems) => {
         dispatch(increaseCartQuantity(
             cartItems,
             toast,
@@ -36,10 +36,22 @@ const ItemContent = ({
             setCurrentQuantity(newQuantity);
             dispatch(decreaseCartQuantity(cartItems,newQuantity));
         }
+    }; */
+
+
+    //cart quantity +/- handled from the backend
+    const handleQtyIncrease = (cartItems) => {
+        dispatch(increaseCartQuantity(cartItems, toast));
+    };
+
+    const handleQtyDecrease = (cartItems) => {
+        if (quantity > 1) {
+            dispatch(decreaseCartQuantity(cartItems, toast));
+        }
     };
 
     const removeItemFromCart = (cartItems) =>{
-        dispatch(removeFromCart(cartItems, toast));
+        dispatch(removeFromCart(cartItems, cartId, toast));
     };
     
     return (
@@ -83,7 +95,7 @@ const ItemContent = ({
 
             <div className="justify-self-center">
                 <SetQuantity 
-                    quantity={currentQuantity}
+                    quantity={quantity}
                     cardCounter={true}
                     handeQtyIncrease={() => handleQtyIncrease({
                         image,
@@ -106,7 +118,8 @@ const ItemContent = ({
             </div>
 
             <div className="justify-self-center lg:text-[17px] text-sm text-slate-600 font-semibold">
-                {formatPrice(Number(currentQuantity) * Number(specialPrice))}
+                {/* {formatPrice(Number(currentQuantity) * Number(specialPrice))} */}
+                {formatPrice(Number(quantity) * Number(specialPrice))}
             </div>
         </div>
     )
