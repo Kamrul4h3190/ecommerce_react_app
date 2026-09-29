@@ -18,15 +18,6 @@ import { getUserCart } from './store/actions'
 
 
 function App() {
-  const dispatch = useDispatch();
-
-  const user = useSelector((state) => state.auth.user);
-
-  useEffect(() => {
-    if (user) {
-      dispatch(getUserCart());
-    }
-  }, [user, dispatch]);
 
   return (
     <React.Fragment>
@@ -37,8 +28,11 @@ function App() {
         <Route path='/products' element={<Products />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />
-        <Route path='/cart' element={<Cart />} />
-        <Route path='/checkout' element={<Checkout />} />
+        
+        <Route path='/' element={<PrivateRoute />}>
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/checkout' element={ <Checkout />}/>
+        </Route>
 
         <Route path='/' element={<PrivateRoute publicPage/>}>
           <Route path='/login' element={ <LogIn />} />

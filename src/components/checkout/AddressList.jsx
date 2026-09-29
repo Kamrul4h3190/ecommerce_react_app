@@ -1,11 +1,12 @@
 import React from 'react'
 import { FaBuilding, FaCheckCircle, FaEdit, FaStreetView, FaTrash } from 'react-icons/fa';
 import { MdLocationCity, MdPinDrop, MdPublic } from 'react-icons/md';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectUserCheckOutAddress } from '../../store/actions';
 
-const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal}) => {
+const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal, setOpenDeleteModal}) => {
     const dispatch = useDispatch();
-    const selectedUserAddress = addresses[0];
+    const { selectedUserCheckoutAddress } = useSelector((state) => state.auth);
 
     const onEditButtonHandler = (addresses) => {
         setSelectedAddress(addresses);
@@ -14,10 +15,11 @@ const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal}) => {
 
     const onDeleteButtonHandler = (addresses) => {
         setSelectedAddress(addresses);
+        setOpenDeleteModal(true);
     };
     
     const handleAddressSelection = (addresses) => {
-
+        dispatch(selectUserCheckOutAddress(addresses));
     };
 
     return (
@@ -27,7 +29,7 @@ const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal}) => {
                 key={address.addressId}
                 onClick={() => handleAddressSelection(address)}
                 className={`p-4 border rounded-md cursor-pointer relative ${
-                    selectedUserAddress?.addressId === address.addressId
+                    selectedUserCheckoutAddress?.addressId === address.addressId
                     ? "bg-green-100"
                     : "bg-white"
                 }`}>
@@ -36,7 +38,7 @@ const AddressList = ({addresses, setSelectedAddress, setOpenAddressModal}) => {
                         <div className='flex items-center'>
                             <FaBuilding size={14} className='mr-2 text-gray-600'/>
                             <p className='font-semibold'>{address.buildingName}</p>
-                            {selectedUserAddress?.addressId === address.addressId && (
+                            {selectedUserCheckoutAddress?.addressId === address.addressId && (
                                 <FaCheckCircle className='text-green-500 ml-2'/>
                             )}
                         </div>

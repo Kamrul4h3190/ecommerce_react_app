@@ -3,6 +3,7 @@ const savedAuth = localStorage.getItem("auth");
 const initialState = {
     user: savedAuth ? JSON.parse(savedAuth) : null,
     address: [],
+    selectedUserChekoutAddress: null,
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -12,7 +13,13 @@ export const authReducer = (state = initialState, action) => {
 
         case "USER_ADDRESS":
             return { ...state, address: action.payload };
-
+        
+        case "SELECT_CHECKOUT_ADDRESS":
+            return { ...state, selectedUserCheckoutAddress: action.payload };
+        
+        case "REMOVE_CHECKOUT_ADDRESS":
+            return { ...state, selectedUserCheckoutAddress: null };
+        
         case "LOG_OUT":
             return {
                 user: null,
