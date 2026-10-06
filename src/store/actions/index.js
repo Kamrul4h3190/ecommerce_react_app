@@ -47,8 +47,8 @@ export const fetchCategories = () => async (dispatch) => {
     }
 };
 
-
-export const addToCart =
+//cart managed from backend instead of localStorate
+/* export const addToCart =
     (data, qty = 1, toast) =>
     async (dispatch) => {
         try {
@@ -150,13 +150,80 @@ export const removeFromCart =
             );
         }
     };
+ */
+
+//cart managed from localStorate
+export const addToCart = (data, qty = 1, toast) => 
+    (dispatch, getState) => {
+        // Find the product
+        const { products } = getState().products;
+        const getProduct = products.find(
+            (item) => item.productId === data.productId
+        );
+
+        // Check for stocks
+        const isQuantityExist = getProduct.quantity >= qty;
+
+        // If in stock -> add
+        if (isQuantityExist) {
+            dispatch({ type: "ADD_CART", payload: {...data, quantity: qty}});
+            toast.success(`${data?.productName} added to the cart`);
+            localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+        } else {
+            // error
+            toast.error("Out of stock");
+        }
+};
 
 
+export const increaseCartQuantity = 
+    (data, toast, currentQuantity, setCurrentQuantity) =>
+    (dispatch, getState) => {
+        // Find the product
+        const { products } = getState().products;
+        
+        const getProduct = products.find(
+            (item) => item.productId === data.productId
+        );
+
+        const isQuantityExist = getProduct.quantity >= currentQuantity + 1;
+
+        if (isQuantityExist) {
+            const newQuantity = currentQuantity + 1;
+            setCurrentQuantity(newQuantity);
+
+            dispatch({
+                type: "ADD_CART",
+                payload: {...data, quantity: newQuantity },
+            });
+            localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+        } else {
+            toast.error("Quantity Reached to Limit");
+        }
+
+    };
+
+
+
+export const decreaseCartQuantity = 
+    (data, newQuantity) => (dispatch, getState) => {
+        dispatch({
+            type: "ADD_CART",
+            payload: {...data, quantity: newQuantity},
+        });
+        localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+    }
+
+export const removeFromCart =  (data, toast) => (dispatch, getState) => {
+    dispatch({type: "REMOVE_CART", payload: data });
+    toast.success(`${data.productName} removed from cart`);
+    localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+}
 
 
 export const authenticateSignInUser =
     (sendData, toast, reset, navigate, setLoader) =>
-    async (dispatch) => {
+    async (dispatch, getState) => {
         try {
             setLoader(true);
 
@@ -177,6 +244,7 @@ export const authenticateSignInUser =
                 type: "SET_CART",
                 payload: cartData,
             });
+            localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
 
             reset();
             toast.success("Login Success");
@@ -283,26 +351,45 @@ export const getUserAddresses = () => async (dispatch, getState) => {
     }
 };
 
-export const getUserCart = () => async (dispatch) => {
+export const createUserCart = (sendCartItems) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: "IS_FETCHING" });
+        await api.post('/cart/create', sendCartItems);
+        await dispatch(getUserCart());
+    } catch (error) {
+        console.log(error);
+        dispatch({ 
+            type: "IS_ERROR",
+            payload: error?.response?.data?.message || "Failed to create cart items",
+         });
+    }
+};
+
+export const getUserCart = () => async (dispatch, getState) => {
     try {
         dispatch({ type: "CART_FETCHING" });
 
         const { data } = await api.get("/carts/users/cart");
 
         dispatch({
-            type: "SET_CART",
-            payload: data,
-        });
+            // type: "SET_CART",
+            // payload: data,
 
-        dispatch({ type: "CART_SUCCESS" });
+            type: "GET_USER_CART_PRODUCTS",
+            payload: data.products,
+            totalPrice: data.totalPrice,
+            cartId: data.cartId
+        });
+        localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+        dispatch({ type: "IS_SUCCESS" });
     } catch (error) {
         console.log(error);
 
         dispatch({
-            type: "CART_ERROR",
+            type: "IS_ERROR",
             payload:
                 error?.response?.data?.message ||
-                "Failed to fetch cart",
+                "Failed to fetch cart items",
         });
     }
 };
@@ -313,4 +400,11 @@ export const selectUserCheckOutAddress = (address) =>{
         payload: address,
     }
 };
+
+export const addPaymentMethod = (method) =>{
+    return{
+        type: "ADD_PAYMENT_METHOD",
+        payload: method,
+    }
+}
 

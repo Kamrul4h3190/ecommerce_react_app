@@ -18,7 +18,7 @@ const ItemContent = ({
     specialPrice,
     cartId,
   }) => {
-    // const [currentQuantity, setCurrentQuantity] = useState(quantity);
+    const [currentQuantity, setCurrentQuantity] = useState(quantity);
     const dispatch = useDispatch();
 
     /* const handleQtyIncrease = (cartItems) => {
@@ -39,8 +39,8 @@ const ItemContent = ({
     }; */
 
 
-    //cart quantity +/- handled from the backend
-    const handleQtyIncrease = (cartItems) => {
+    //cart quantity +/-/delete handled from the backend
+    /* const handleQtyIncrease = (cartItems) => {
         dispatch(increaseCartQuantity(cartItems, toast));
     };
 
@@ -52,6 +52,28 @@ const ItemContent = ({
 
     const removeItemFromCart = (cartItems) =>{
         dispatch(removeFromCart(cartItems, cartId, toast));
+    }; */
+
+    //cart quantity +/-/delete handled from localStorage
+    const handleQtyIncrease = (cartItems) => {
+        dispatch(increaseCartQuantity(
+            cartItems,
+            toast,
+            currentQuantity,
+            setCurrentQuantity
+        ));
+    };
+
+    const handleQtyDecrease = (cartItems) => {
+        if (currentQuantity > 1) {
+            const newQuantity = currentQuantity - 1;
+            setCurrentQuantity(newQuantity);
+            dispatch(decreaseCartQuantity(cartItems, newQuantity));
+        }
+    };
+
+    const removeItemFromCart = (cartItems) => {
+        dispatch(removeFromCart(cartItems, toast));
     };
     
     return (

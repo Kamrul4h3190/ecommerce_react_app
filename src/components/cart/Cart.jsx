@@ -10,11 +10,12 @@ import { formatPrice } from "../../utils/formatPrice";
 const Cart = () => {
     const dispatch = useDispatch();
     const {cart, cartId} = useSelector((state) => state.carts);
+    // const {cart} = useSelector((state) => state.carts);
     const newCart = {...cart};
     
-    useEffect(() => {
-        dispatch(fetchProducts())
-    }, []);
+    // useEffect(() => {
+    //     dispatch(fetchProducts())
+    // }, []);
 
     newCart.totalPrice = cart?.reduce(
         (acc, cur) => acc + Number(cur?.specialPrice) * Number(cur?.quantity), 0
