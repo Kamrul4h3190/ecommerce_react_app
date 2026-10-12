@@ -15,6 +15,7 @@ import Register from './components/auth/Register'
 import Checkout from './components/checkout/Checkout'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserCart } from './store/actions'
+import PaymentConfirmation from './components/checkout/PaymentConfirmation'
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path='/' element={<PrivateRoute />}>
           <Route path='/cart' element={<Cart />} />
           <Route path='/checkout' element={ <Checkout />}/>
+          <Route path='/order-confirm' element={ <PaymentConfirmation />}/>
         </Route>
 
         <Route path='/' element={<PrivateRoute publicPage/>}>
