@@ -157,6 +157,17 @@ export const addToCart = (data, qty = 1, toast) =>
     (dispatch, getState) => {
         // Find the product
         const { products } = getState().products;
+        const { cart } = getState().carts;
+
+        const existingProduct = cart.find(
+            (item) => item.productId === data.productId
+        );
+
+        if (existingProduct) {
+            toast.error(`${data?.productName} is already in the cart`);
+            return;
+        }
+
         const getProduct = products.find(
             (item) => item.productId === data.productId
         );
