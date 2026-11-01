@@ -1,7 +1,7 @@
 import { href } from "react-router-dom";
 import { bannerImageOne, bannerImageThree, bannerImageTwo } from "./constant";
 import { current } from "@reduxjs/toolkit";
-import { FaBoxOpen, FaHome, FaShoppingCart, FaStore, FaThList } from "react-icons/fa";
+import { FaBox, FaBoxOpen, FaHome, FaShoppingCart, FaStore, FaThList } from "react-icons/fa";
 
 export const bannerLists = [
     {
@@ -41,6 +41,10 @@ export const adminNavigation = [
         name: "Products", 
         href: "/admin/products", 
         icon: FaBoxOpen
+    },{
+        name: "Inactive Products", 
+        href: "/admin/products/inactive", 
+        icon: FaBox
     },{
         name: "Categories", 
         href: "/admin/categories", 

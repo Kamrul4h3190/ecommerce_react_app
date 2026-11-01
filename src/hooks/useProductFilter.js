@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { dashboardProductsAction, fetchProducts } from "../store/actions";
+import { dashboardInactiveProductsAction, dashboardProductsAction, fetchProducts } from "../store/actions";
 
 const useProductFilter = () => {
     const [searchParams] = useSearchParams();
@@ -50,9 +50,32 @@ export const useDashboardProductFilter = () => {
             : 1;
 
         params.set("pageNumber", currentPage - 1);
+        //fetch all if isActive not set
+        params.set("isActive", true);//fetch active products
+        // params.set("isActive", false);//fetch Inactive products
 
         const queryString = params.toString();
         dispatch(dashboardProductsAction(queryString));
+
+    }, [dispatch, searchParams]);
+};
+export const useDashboardInactiveProductFilter = () => {
+    const [searchParams] = useSearchParams();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+
+        const currentPage = searchParams.get("page")
+            ? Number(searchParams.get("page"))
+            : 1;
+
+        params.set("pageNumber", currentPage - 1);
+        //fetch all if isActive not set        
+        params.set("isActive", false);//fetch Inactive products
+
+        const queryString = params.toString();
+        dispatch(dashboardInactiveProductsAction(queryString));
 
     }, [dispatch, searchParams]);
 };
