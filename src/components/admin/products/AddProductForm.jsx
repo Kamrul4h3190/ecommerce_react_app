@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import InputField from '../../shared/InputField';
 import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCategories, updateProductFromDashboard } from '../../../store/actions';
+import { addNewProductFromDashboard, fetchCategories, updateProductFromDashboard } from '../../../store/actions';
 import toast from 'react-hot-toast';
 import Spinners from '../../shared/Spinners';
 import SelectTextField from '../../shared/SelectTextField';
@@ -28,8 +28,15 @@ const dispatch = useDispatch();
     });
 
     const saveProductHandler = (data) => {
+        const sendData = {
+                ...data,
+                categoryId: selectedCategory.categoryId,
+            };
         if(!update) {
             // create new product logic
+            dispatch(addNewProductFromDashboard(
+                sendData, toast, reset, setLoader, setOpen
+            ));
         } else {
             const sendData = {
                 ...data,
@@ -148,6 +155,7 @@ const dispatch = useDispatch();
                 className={`px-4 py-2 w-full border outline-hidden bg-transparent text-slate-800 rounded-md ${
                     errors["description"]?.message ? "border-red-500" : "border-slate-700" 
                 }`}
+                maxLength={255}
                 {...register("description", {
                     required: {value: true, message:"Description is required"},
                 })}
@@ -179,7 +187,7 @@ const dispatch = useDispatch();
                         <Spinners /> Loading...
                     </div>
                 ) : (
-                    "Update"
+                    "Save"
                 )}
             </Button>
         </div>

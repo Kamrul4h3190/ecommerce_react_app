@@ -8,6 +8,7 @@ import { useDashboardInactiveProductFilter} from '../../../hooks/useProductFilte
 import ActivationModal from '../../shared/ActivationModal';
 import { activateProduct } from '../../../store/actions';
 import toast from 'react-hot-toast';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 const AdminInactiveProducts = () => {
   
@@ -23,6 +24,11 @@ const AdminInactiveProducts = () => {
   const [openActivateModal, setOpenActivateModal] = useState(false);
 
   const [loader, setLoader] = useState(false);
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const pathname = useLocation().pathname;
 
   useDashboardInactiveProductFilter();
 
@@ -44,7 +50,10 @@ const handleActivate = (product) => {
   setOpenActivateModal(true);
 };
 const handlePaginationChange = (paginationModel) => {
-
+  const page = paginationModel.page + 1;
+  setCurrentPage(page);
+  params.set("page", page.toString());
+  navigate(`${pathname}?${params}`)
 };
 
 const onActivateHandler = () => {
