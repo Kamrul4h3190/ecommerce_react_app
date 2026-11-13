@@ -540,7 +540,8 @@ export const dashboardProductsAction = (queryString) => async (dispatch) => {
 export const dashboardInactiveProductsAction = (queryString) => async (dispatch) => {
     try {
         dispatch({ type: "IS_FETCHING" });
-        const { data } = await api.get(`/admin/products?${queryString}&isActive=false`);
+        // const { data } = await api.get(`/admin/products?${queryString}&isActive=false`);
+        const { data } = await api.get(`/admin/products?${queryString}`);
         dispatch({
             type: "FETCH_PRODUCTS",
             payload: data.content,
@@ -562,15 +563,16 @@ export const dashboardInactiveProductsAction = (queryString) => async (dispatch)
 
 
 export const updateProductFromDashboard = 
-    (sendData, toast, reset, setLoader, setOpen) => async (dispatch) => {
+    (sendData, toast, reset, setLoader, setOpen, queryString) => async (dispatch) => {
     try {
         setLoader(true);
         await api.put(`/admin/products/${sendData.id}`, sendData);
         toast.success("Product update successful");
         reset();
         setLoader(false);
+
+        await dispatch(dashboardProductsAction(queryString));
         setOpen(false);
-        await dispatch(dashboardProductsAction());
     } catch (error) {
         toast.error(error?.response?.data?.description || "Product update failed");
      
@@ -599,14 +601,15 @@ export const addNewProductFromDashboard =
 
 
 export const deleteProduct = 
-    (setLoader, productId, toast, setOpenDeleteModal) => async (dispatch, getState) => {
+    (setLoader, productId, toast, setOpenDeleteModal, queryString) => async (dispatch, getState) => {
     try {
         setLoader(true)
         await api.delete(`/admin/products/${productId}`);
         toast.success("Product deleted successfully");
         setLoader(false);
+        
+        await dispatch(dashboardProductsAction(queryString));
         setOpenDeleteModal(false);
-        await dispatch(dashboardProductsAction());
     } catch (error) {
         console.log(error);
         toast.error(
@@ -616,14 +619,15 @@ export const deleteProduct =
 };
 
 export const activateProduct = 
-    (setLoader, productId, toast, setOpenActivationModal) => async (dispatch, getState) => {
+    (setLoader, productId, toast, setOpenActivationModal, queryString) => async (dispatch, getState) => {
     try {
         setLoader(true)
         await api.put(`/admin/products/activate/${productId}`);
         toast.success("Product activated successfully");
         setLoader(false);
+        
+        await dispatch(dashboardInactiveProductsAction(queryString));
         setOpenActivationModal(false);
-        await dispatch(dashboardInactiveProductsAction());
     } catch (error) {
         console.log(error);
         toast.error(
@@ -633,14 +637,15 @@ export const activateProduct =
 };
 
 export const updateProductImageFromDashboard = 
-    (formData, productId, toast, setLoader, setOpen) => async (dispatch) => {
+    (formData, productId, toast, setLoader, setOpen, queryString) => async (dispatch) => {
     try {
         setLoader(true);
         await api.put(`/admin/products/${productId}/image`, formData);
         toast.success("Image upload successful");
         setLoader(false);
+        
+        await dispatch(dashboardProductsAction(queryString));
         setOpen(false);
-        await dispatch(dashboardProductsAction());
     } catch (error) {
         toast.error(error?.response?.data?.description || "Product Image upload failed");
      
@@ -673,7 +678,7 @@ export const getAllCategoriesDashboard = (queryString) => async (dispatch) => {
 };
 
 export const createCategoryDashboardAction =
-  (sendData, setOpen, reset, toast) => async (dispatch, getState) => {
+  (sendData, setOpen, reset, toast, queryString) => async (dispatch, getState) => {
     try {
       dispatch({ type: "CATEGORY_LOADER" });
       await api.post("/admin/categories", sendData);
@@ -681,7 +686,7 @@ export const createCategoryDashboardAction =
       reset();
       toast.success("Category Created Successful");
       setOpen(false);
-      await dispatch(getAllCategoriesDashboard());
+      await dispatch(getAllCategoriesDashboard(queryString));
     } catch (err) {
       console.log(err);
       toast.error(
@@ -696,7 +701,7 @@ export const createCategoryDashboardAction =
   };
 
 export const updateCategoryDashboardAction =
-  (sendData, setOpen, categoryID, reset, toast) =>
+  (sendData, setOpen, categoryID, reset, toast, queryString) =>
   async (dispatch, getState) => {
     try {
       dispatch({ type: "CATEGORY_LOADER" });
@@ -708,7 +713,7 @@ export const updateCategoryDashboardAction =
       reset();
       toast.success("Category Update Successful");
       setOpen(false);
-      await dispatch(getAllCategoriesDashboard());
+      await dispatch(getAllCategoriesDashboard(queryString));
     } catch (err) {
       console.log(err);
       toast.error(
@@ -723,7 +728,7 @@ export const updateCategoryDashboardAction =
   };
 
 export const deleteCategoryDashboardAction =
-  (setOpen, categoryID, toast) => async (dispatch, getState) => {
+  (setOpen, categoryID, toast, queryString) => async (dispatch, getState) => {
     try {
       dispatch({ type: "CATEGORY_LOADER" });
 
@@ -733,7 +738,7 @@ export const deleteCategoryDashboardAction =
 
       toast.success("Category Delete Successful");
       setOpen(false);
-      await dispatch(getAllCategoriesDashboard());
+      await dispatch(getAllCategoriesDashboard(queryString));
     } catch (err) {
       console.log(err);
       toast.error(err?.response?.data?.message || "Failed to delete category");

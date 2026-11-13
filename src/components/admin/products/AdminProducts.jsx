@@ -38,6 +38,7 @@ const AdminProducts = () => {
   const [searchParams] = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = useLocation().pathname;
+  const queryString = `pageNumber=${Number(searchParams.get("page") || 1) - 1}&isActive=true`;
 
   useDashboardProductFilter();
 
@@ -84,7 +85,7 @@ const handlePaginationChange = (paginationModel) => {
 
 
 const onDeleteHandler = () => {
-  dispatch(deleteProduct(setLoader, selectedProduct?.id, toast, setOpenDeleteModal));
+  dispatch(deleteProduct(setLoader, selectedProduct?.id, toast, setOpenDeleteModal, queryString));
 };
 
   const emptyProduct = !products || products?.length ===0;
@@ -159,6 +160,7 @@ const onDeleteHandler = () => {
           setOpen={openUpdateModal ? setOpenUpdateModal : setOpenAddModal}
           product={selectedProduct}
           update={openUpdateModal}
+          queryString={queryString}
           />
     </Modal>
 
@@ -169,6 +171,7 @@ const onDeleteHandler = () => {
         <ImageUploadForm 
           setOpen={setOpenImageUploadModal}
           product={selectedProduct}
+          queryString={queryString}
           />
     </Modal>
 

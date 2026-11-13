@@ -19,6 +19,7 @@ const Category = () => {
   const pathname = useLocation().pathname;
   const params = new URLSearchParams(searchParams);
   const navigate = useNavigate();
+  const queryString = `pageNumber=${Number(searchParams.get("page") || 1) - 1}`;
 
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
@@ -53,7 +54,7 @@ const Category = () => {
 
   const onDeleteHandler = () => {
     dispatch(
-      deleteCategoryDashboardAction(setOpenDeleteModal, selectedCategory?.id, toast)
+      deleteCategoryDashboardAction(setOpenDeleteModal, selectedCategory?.id, toast,  queryString)
     );
   };
 
@@ -139,6 +140,7 @@ const Category = () => {
           open={categoryLoader}
           category={selectedCategory}
           update={openUpdateModal}
+          queryString={queryString}
         />
       </Modal>
 

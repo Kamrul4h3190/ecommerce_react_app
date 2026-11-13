@@ -29,6 +29,7 @@ const AdminInactiveProducts = () => {
   const [searchParams] = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = useLocation().pathname;
+  const queryString = `pageNumber=${Number(searchParams.get("page") || 1) - 1}&isActive=false`;
 
   useDashboardInactiveProductFilter();
 
@@ -57,7 +58,7 @@ const handlePaginationChange = (paginationModel) => {
 };
 
 const onActivateHandler = () => {
-  dispatch(activateProduct(setLoader, selectedProduct?.id, toast, setOpenActivateModal));
+  dispatch(activateProduct(setLoader, selectedProduct?.id, toast, setOpenActivateModal, queryString));
 };
 
 

@@ -10,7 +10,7 @@ import SelectTextField from '../../shared/SelectTextField';
 import Skeleton from '../../shared/Skeleton';
 import ErrorPage from '../../shared/ErrorPage';
 
-const AddProductForm = ({ setOpen, product, update=false}) => {
+const AddProductForm = ({ setOpen, product, update=false, queryString}) => {
 const [loader, setLoader] = useState(false);
 const [selectedCategory, setSelectedCategory] = useState();
 const {categories} = useSelector((state) => state.products);
@@ -27,7 +27,7 @@ const dispatch = useDispatch();
         mode: "onTouched"
     });
 
-    const saveProductHandler = (data) => {
+    /* const saveProductHandler = (data) => {
         const sendData = {
                 ...data,
                 categoryId: selectedCategory.categoryId,
@@ -42,7 +42,22 @@ const dispatch = useDispatch();
                 ...data,
                 id: product.id,
             };
-            dispatch(updateProductFromDashboard(sendData, toast, reset, setLoader, setOpen));
+            dispatch(updateProductFromDashboard(sendData, toast, reset, setLoader, setOpen, queryString));
+        }
+    }; */
+    const saveProductHandler = (data) => {
+        if (!update) {
+            const sendData = {
+                ...data,
+                categoryId: selectedCategory.categoryId,
+            };
+            dispatch(addNewProductFromDashboard(sendData, toast, reset, setLoader, setOpen));
+        } else {
+            const sendData = {
+                ...data,
+                id: product.id,
+            };
+            dispatch(updateProductFromDashboard(sendData, toast, reset, setLoader, setOpen, queryString));
         }
     };
 
