@@ -15,7 +15,7 @@ const ORDER_STATUSES = [
     "Accepted",
 ];
 
-const UpdateOrderForm = ({ setOpen, selectedId, selectedItem, loader, setLoader}) => {
+const UpdateOrderForm = ({ setOpen, selectedId, selectedItem, loader, setLoader, queryString}) => {
     const [orderStatus, setOrderStatus] = useState(selectedItem?.status || 'Accepted');
     const [error, setError] = useState("");
     const dispatch = useDispatch();
@@ -35,6 +35,8 @@ const UpdateOrderForm = ({ setOpen, selectedId, selectedItem, loader, setLoader}
             toast,
             setLoader,
             isAdmin,
+            queryString,
+            setOpen
         ));
     };
 

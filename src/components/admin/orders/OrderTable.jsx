@@ -17,6 +17,7 @@ const OrderTable = ({ adminOrder, pagination}) => {
   const [searchParams] = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = useLocation().pathname;
+  const queryString = `pageNumber=${Number(searchParams.get("page") || 1) - 1}`;
 
 const tableRecords = adminOrder?.map((item) => {
   return {
@@ -85,6 +86,7 @@ const handleEdit = (order) => {
             setLoader={setLoader}
             selectedId={selectedItem.id}
             selectedItem={selectedItem}
+            queryString={queryString}
             />
       </Modal>
     </div>
