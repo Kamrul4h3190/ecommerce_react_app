@@ -39,6 +39,8 @@ const AdminProducts = () => {
   const params = new URLSearchParams(searchParams);
   const pathname = useLocation().pathname;
   const queryString = `pageNumber=${Number(searchParams.get("page") || 1) - 1}&isActive=true`;
+  const { user } = useSelector((state) => state.auth);
+  const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
 
   useDashboardProductFilter();
 
@@ -85,7 +87,7 @@ const handlePaginationChange = (paginationModel) => {
 
 
 const onDeleteHandler = () => {
-  dispatch(deleteProduct(setLoader, selectedProduct?.id, toast, setOpenDeleteModal, queryString));
+  dispatch(deleteProduct(setLoader, selectedProduct?.id, toast, setOpenDeleteModal, queryString, isAdmin));
 };
 
   const emptyProduct = !products || products?.length ===0;
@@ -161,6 +163,7 @@ const onDeleteHandler = () => {
           product={selectedProduct}
           update={openUpdateModal}
           queryString={queryString}
+          isAdmin={isAdmin}
           />
     </Modal>
 
@@ -172,6 +175,7 @@ const onDeleteHandler = () => {
           setOpen={setOpenImageUploadModal}
           product={selectedProduct}
           queryString={queryString}
+          isAdmin={isAdmin}
           />
     </Modal>
 
@@ -183,11 +187,12 @@ const onDeleteHandler = () => {
       title="Delete Product"
       onDeleteHandler={onDeleteHandler} />
 
-      <ProductViewModal
-        open={openProductViewModal}
-        setOpen={setOpenProductViewModal}
-        product={selectedProduct}
-      />
+    <ProductViewModal
+      open={openProductViewModal}
+      setOpen={setOpenProductViewModal}
+      product={selectedProduct}
+    />
+
     </div>
   )
 }
