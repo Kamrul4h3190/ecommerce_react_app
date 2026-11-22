@@ -1,43 +1,53 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import React from "react";
+import { useSelector } from "react-redux";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const PrivateRoute = ({ publicPage = false, adminOnly = false }) => {
-    const { user } = useSelector((state) => state.auth)
-    const location = useLocation()
+    const { user } = useSelector((state) => state.auth);
+    const location = useLocation();
 
-    const isAdmin = user?.roles?.includes("ROLE_ADMIN")
-    const isSeller = user?.roles?.includes("ROLE_SELLER")
+    const isAdmin = user?.roles?.includes("ROLE_ADMIN");
+    const isSeller = user?.roles?.includes("ROLE_SELLER");
 
     if (publicPage) {
-        return user ? <Navigate to="/" replace /> : <Outlet />
+        return user
+            ? <Navigate to="/" replace />
+            : <Outlet />;
     }
 
     if (!user) {
-        return <Navigate to="/login" state={{ from: location }} replace />
+        return (
+            <Navigate
+                to="/login"
+                state={{ from: location }}
+                replace
+            />
+        );
     }
 
     if (adminOnly) {
+        if (!isAdmin && !isSeller) {
+            return <Navigate to="/" replace />;
+        }
+
         if (isSeller && !isAdmin) {
             const sellerAllowedPaths = [
                 "/admin/orders",
                 "/admin/products"
-            ]
+            ];
 
-            const sellerAllowed = sellerAllowedPaths.some(path =>
-                location.pathname.startsWith(path)
-            )
+            const allowed = sellerAllowedPaths.some(path =>
+                location.pathname === path ||
+                location.pathname.startsWith(path + "/")
+            );
 
-            if (!sellerAllowed) {
-                return <Navigate to="/" replace />
+            if (!allowed) {
+                return <Navigate to="/" replace />;
             }
-        }
-        if (!isAdmin && !isSeller) {
-            return <Navigate to="/" replace />
         }
     }
 
-    return <Outlet />
-}
+    return <Outlet />;
+};
 
-export default PrivateRoute
+export default PrivateRoute;
